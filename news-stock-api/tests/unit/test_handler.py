@@ -4,12 +4,13 @@ import pytest
 
 from hello_world import app
 from rest_api_lambdas import create_user
+from rest_api_lambdas import ipo_symbol
 
 def test_create_user():
     # Test valid request
     event = {
         "body": json.dumps({
-            "user_id": "12345",
+            "user_id": "1234567",
             "first_name": "John",
             "last_name": "Doe"
         })
@@ -17,7 +18,7 @@ def test_create_user():
     response = create_user.lambda_handler(event, None)
     assert response['statusCode'] == 200
     assert json.loads(response['body']) == {
-        "user_id": "12345",
+        "user_id": "1234567",
         "first_name": "John",
         "last_name": "Doe"
     }
@@ -26,8 +27,7 @@ def test_create_user():
     event = {
         "body": json.dumps({
             "first_name": "John",
-            "last_name": "Doe",
-            "user_id": None
+            "last_name": "Doe"
         })
     }
     response = create_user.lambda_handler(event, None)
@@ -77,6 +77,34 @@ def test_create_user():
         "error": "Invalid input"
     }
 
+# Dummy event and context for testing
+event = {
+    "body": json.dumps({
+        "user_id": "12345",
+        "symbol": "AAPL"
+    })
+}
+
+context = {}
+
+# Test case 1: Successfully adding a symbol
+def test_add_symbol_success():
+    response = ipo_symbol.lambda_handler(event, context)
+    assert response['statusCode'] == 200
+    assert json.loads(response['body']) == {'message': 'Symbol added successfully'}
+
+# Test case 2: Adding a symbol that already exists
+def test_add_symbol_exists():
+    response = ipo_symbol.lambda_handler(event, context)
+    assert response['statusCode'] == 400
+    assert json.loads(response['body']) == {'error': 'Symbol already exists'}
+
+# Test case 3: Missing required fields
+event["body"] = json.dumps({})
+def test_add_symbol_missing_fields():
+    response = ipo_symbol.lambda_handler(event, context)
+    assert response['statusCode'] == 400
+    assert json.loads(response['body']) == {'error': 'Missing required field(s)'}
 
 @pytest.fixture()
 def apigw_event():
