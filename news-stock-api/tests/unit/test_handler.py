@@ -20,7 +20,26 @@ def test_create_user():
     assert json.loads(response['body']) == {
         "user_id": "1234567",
         "first_name": "John",
-        "last_name": "Doe"
+        "last_name": "Doe",
+        "balance": 500
+    }
+
+    # Test valid request with custom start_balance
+    event = {
+        "body": json.dumps({
+            "user_id": "1234568",
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "start_balance": 1000
+        })
+    }
+    response = create_user.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    assert json.loads(response['body']) == {
+        "user_id": "1234568",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "balance": 1000
     }
 
      # Test missing fields
