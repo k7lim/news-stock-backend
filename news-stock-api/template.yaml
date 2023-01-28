@@ -26,7 +26,7 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-    CreateUserFunction:
+  CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: rest-api-lambdas/create_user.py
@@ -36,7 +36,43 @@ Resources:
         CreateUserApi:
           Type: Api
           Properties:
-            Path: /users
+            Path: /user
+            Method: POST
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: rest-api-lambdas/get_user.py
+      Handler: get_user.lambda_handler
+      Runtime: python3.9
+      Events:
+        GetUserApi:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: GET
+  UpdatePricesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: rest-api-lambdas/update_prices.py
+      Handler: update_prices.lambda_handler
+      Runtime: python3.9
+      Events:
+        UpdatePricesApi:
+          Type: Api
+          Properties:
+            Path: /prices
+            Method: GET
+  IpoSymbolFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: rest-api-lambdas/ipo_symbol.py
+      Handler: ipo_symbol.lambda_handler
+      Runtime: python3.9
+      Events:
+        IpoSymbolApi:
+          Type: Api
+          Properties:
+            Path: /prices
             Method: POST
 
 Outputs:
@@ -52,3 +88,39 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  CreateUserApi:
+    Description: "API Gateway endpoint URL for Prod stage for Create User function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users"
+  GetUserApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get User function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/{user_id}"
+  IPOsymbolApi:
+    Description: "API Gateway endpoint URL for Prod stage for IPO symbol function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ipo"
+  UpdatePricesApi:
+    Description: "API Gateway endpoint URL for Prod stage for Update Prices function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update"
+  CreateUserFunction:
+    Description: "Create User Lambda Function ARN"
+    Value: !GetAtt CreateUserFunction.Arn
+  GetUserFunction:
+    Description: "Get User Lambda Function ARN"
+    Value: !GetAtt GetUserFunction.Arn
+  IPOsymbolFunction:
+    Description: "IPO symbol Lambda Function ARN"
+    Value: !GetAtt IPOsymbolFunction.Arn
+  UpdatePricesFunction:
+    Description: "Update Prices Lambda Function ARN"
+    Value: !GetAtt UpdatePricesFunction.Arn
+  CreateUserFunctionIamRole:
+    Description: "Implicit IAM Role created for Create User function"
+    Value: !GetAtt CreateUserFunctionRole.Arn
+  GetUserFunctionIamRole:
+    Description: "Implicit IAM Role created for Get User function"
+    Value: !GetAtt GetUserFunctionRole.Arn
+  IPOsymbolFunctionIamRole:
+    Description: "Implicit IAM Role created for IPO symbol function"
+    Value: !GetAtt IPOsymbolFunctionRole.Arn
+  UpdatePricesFunctionIamRole:
+    Description: "Implicit IAM Role created for Update Prices function"
+    Value: !GetAtt UpdatePricesFunctionRole.Arn
