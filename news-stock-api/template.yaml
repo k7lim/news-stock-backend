@@ -74,6 +74,18 @@ Resources:
           Properties:
             Path: /prices
             Method: POST
+  MakeTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: rest-api-lambdas/make_transactions.py
+      Handler: make_transactions.lambda_handler
+      Runtime: python3.9
+      Events:
+        MakeTransactionsApi:
+          Type: Api
+          Properties:
+            Path: /transactions
+            Method: POST
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -100,6 +112,9 @@ Outputs:
   UpdatePricesApi:
     Description: "API Gateway endpoint URL for Prod stage for Update Prices function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update"
+  MakeTransactionsApi:
+    Description: "API Gateway endpoint URL for Prod stage for Make Transactions function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/transactions"
   CreateUserFunction:
     Description: "Create User Lambda Function ARN"
     Value: !GetAtt CreateUserFunction.Arn
@@ -112,6 +127,9 @@ Outputs:
   UpdatePricesFunction:
     Description: "Update Prices Lambda Function ARN"
     Value: !GetAtt UpdatePricesFunction.Arn
+  MakeTransactionsFunction:
+    Description: "Make Transactions Lambda Function ARN"
+    Value: !GetAtt MakeTransactionsFunction.Arn
   CreateUserFunctionIamRole:
     Description: "Implicit IAM Role created for Create User function"
     Value: !GetAtt CreateUserFunctionRole.Arn
@@ -124,3 +142,6 @@ Outputs:
   UpdatePricesFunctionIamRole:
     Description: "Implicit IAM Role created for Update Prices function"
     Value: !GetAtt UpdatePricesFunctionRole.Arn
+  MakeTransactionsFunctionIamRole:
+    Description: "Implicit IAM Role created for Make Transactions function"
+    Value: !GetAtt MakeTransactionsFunctionRole.Arn
